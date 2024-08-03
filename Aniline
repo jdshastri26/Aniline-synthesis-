@@ -1,0 +1,58 @@
+
+
+# Load necessary library
+library(deSolve)
+
+# Define initial concentrations (in mol/L)
+initial_concentrations <- c(Nitrobenzene = 1.0,  # initial concentration of Nitrobenzene
+                            Aniline = 0.0)       # initial concentration of Aniline
+
+# Define rate constants (in 1/s)
+rate_constant <- 0.1
+
+# Define the rate equations
+rate_equations <- function(time, concentrations, parameters) {
+  with(as.list(c(concentrations, parameters)), {
+    dNitrobenzene <- -rate_constant * Nitrobenzene
+    dAniline <- rate_constant * Nitrobenzene
+    
+    list(c(dNitrobenzene, dAniline))
+  })
+}
+
+# Define parameters
+parameters <- c(rate_constant = rate_constant)
+
+# Define time sequence for the simulation (in seconds)
+time_sequence <- seq(0, 100, by = 1)
+
+# Solve the differential equations
+results <- ode(y = initial_concentrations, times = time_sequence, func = rate_equations, parms = parameters)
+
+# Convert results to a data frame for plotting
+results_df <- as.data.frame(results)
+
+# Load necessary library for plotting
+library(ggplot2)
+
+# Plot the results
+ggplot(data = results_df, aes(x = time)) +
+  geom_line(aes(y = Nitrobenzene, color = "Nitrobenzene")) +
+  geom_line(aes(y = Aniline, color = "Aniline")) +
+  labs(title = "Concentration of Nitrobenzene and Aniline Over Time",
+       x = "Time (s)", y = "Concentration (mol/L)") +
+  scale_color_manual(values = c("Nitrobenzene" = "blue", "Aniline" = "red")) +
+  theme_minimal()
+
+
+
+Explanation
+
+    Load the deSolve library: This library is used for solving differential equations.
+    Define initial concentrations: Starting concentrations for nitrobenzene and aniline.
+    Define rate constants: Rate constant for the reaction.
+    Rate equations: Differential equations describing the reaction kinetics.
+    Parameters: A list containing the rate constants.
+    Time sequence: Time points at which to solve the differential equations.
+    Solve ODEs: Using ode function from deSolve to solve the equations.
+    Plot the results: Using ggplot2 to visualize the concentrations of reactants and products over time.
